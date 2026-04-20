@@ -1,0 +1,22 @@
+# Build output
+/target/
+
+# WebAssembly artifacts
+*.wasm
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Tauri build
+/desktop/src-tauri/target/
+
+# Node
+node_modules/
+dist/
