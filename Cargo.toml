@@ -1,56 +1,104 @@
 [workspace]
 members = [
-    "AOL2/anchor",
-    "AOL2/p2p",
-    "AOL2/truth-engine/examples",
-    "AOL2/truth-engine/qssm-api",
-    "AOL2/truth-engine/qssm-cli",
-    "AOL2/truth-engine/qssm-core",
-    "AOL2/truth-engine/qssm-entropy",
-    "AOL2/truth-engine/qssm-gadget",
-    "AOL2/truth-engine/qssm-le",
-    "AOL2/truth-engine/qssm-local-prover",
-    "AOL2/truth-engine/qssm-local-verifier",
-    "AOL2/truth-engine/qssm-ms",
-    "AOL2/truth-engine/qssm-proofs",
-    "AOL2/truth-engine/qssm-templates",
-    "AOL2/truth-engine/qssm-utils",
+    # Shared libs
+    "shared-libs/qssm-traits",
+    "shared-libs/utils",
+    "shared-libs/kaspa",
+    "shared-libs/qssm-he",
+    "shared-libs/p2p-net",
+    "shared-libs/crypto",
+    "shared-libs/identity-dag",
+    "shared-libs/sovereign-types",
+
+    # Truth Engine (standalone, no network I/O)
+    "truth-engine/qssm-gadget",
+    "truth-engine/qssm-le",
+    "truth-engine/qssm-ms",
+    "truth-engine/qssm-proofs",
+    "truth-engine/template-lib",
+    "truth-engine/local-verifier",
+    "truth-engine/api",
+    "truth-engine/examples",
+
+    # L1 DAG
+    "l1-dag/governor",
+    "l1-dag/dag",
+    "l1-dag/consensus",
+    "l1-dag/mempool",
+    "l1-dag/miner",
+    "l1-dag/state_machine",
+    "l1-dag/networking",
+    "l1-dag/node_api",
+
+    # L2 Rollup
+    "l2-rollup/mssq-batcher",
+    "l2-rollup/mssq-sovereign",
+    "l2-rollup/dag",
+    "l2-rollup/state_machine",
+    "l2-rollup/sequencer",
+    "l2-rollup/mempool",
+    "l2-rollup/anchor",
+    "l2-rollup/networking",
+
+    # Integration
+    "integration/zk-examples",
+    "integration/e2e-node-flow",
+    "integration/l1-dag/l1-sync-tests",
+    "integration/zk-stack/zk-benchmarks",
+    "integration/l2-rollup/mempool-overflow-test",
+
+    # Desktop
     "desktop/src-tauri",
 ]
 resolver = "2"
 
 [workspace.package]
 edition = "2021"
-license = "GPL-2.0-only"
-repository = "https://github.com/peavey2787/mssq-rs"
+license = "BUSL-1.1"
 
 [workspace.dependencies]
-accelerometer = "0.12"
+crossterm = "0.28"
+futures = "0.3"
+libp2p = "0.56"
+libp2p-noise = "0.46"
+libp2p-yamux = "0.47"
+ratatui = "0.29"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "signal", "sync", "time"] }
+tracing = "0.1"
 argon2 = "0.5"
 blake3 = "1.5"
-futures = "0.3"
+accelerometer = "0.12"
 hex = "0.4"
-libp2p = "0.56"
-maxminddb = "0.28.1"
-rand = "0.8"
+openentropy-core = "0.12"
 rayon = "1.10"
-serde = { version = "1", features = ["derive"] }
-serde_json = { version = "1", features = ["preserve_order"] }
 smallvec = "1.13"
+ml-dsa = "0.1.0-rc.8"
+rand = "0.8"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 thiserror = "1.0"
-tokio = { version = "1", features = ["fs", "io-util", "macros", "rt-multi-thread", "signal", "sync", "time"] }
-ureq = "3.3.0"
+ureq = { version = "2.10", features = ["json"] }
+maxminddb = "0.24"
 
-p2p-net = { package = "p2p", path = "AOL2/p2p" }
-qssm-entropy = { path = "AOL2/truth-engine/qssm-entropy" }
-qssm-gadget = { path = "AOL2/truth-engine/qssm-gadget", version = "=1.1.0" }
-qssm-le = { path = "AOL2/truth-engine/qssm-le", version = "=1.0.0" }
-qssm-ms = { path = "AOL2/truth-engine/qssm-ms", version = "=1.0.0" }
-qssm-utils = { path = "AOL2/truth-engine/qssm-utils", version = "=1.0.0" }
+# Internal workspace crates
+qssm-utils = { path = "shared-libs/utils" }
+qssm-traits = { path = "shared-libs/qssm-traits" }
+qssm-le = { path = "truth-engine/qssm-le" }
+qssm-ms = { path = "truth-engine/qssm-ms" }
+qssm-gadget = { path = "truth-engine/qssm-gadget", version = "=1.1.0" }
+qssm-wrapper = { path = "l2-rollup/mssq-sovereign" }
+qssm-proofs = { path = "truth-engine/qssm-proofs" }
+qssm-he = { path = "shared-libs/qssm-he" }
+qssm-kaspa = { path = "shared-libs/kaspa" }
+governor = { path = "l1-dag/governor" }
+mssq-batcher = { path = "l2-rollup/mssq-batcher" }
+p2p-net = { path = "shared-libs/p2p-net" }
+qssm-examples = { path = "integration/zk-examples" }
+e2e-node-flow = { path = "integration/e2e-node-flow" }
+zk-api = { path = "truth-engine/api" }
+template-lib = { path = "truth-engine/template-lib" }
+local-verifier = { path = "truth-engine/local-verifier" }
+sovereign-types = { path = "shared-libs/sovereign-types" }
 
 [profile.dev]
 split-debuginfo = "unpacked"
-
-[patch.crates-io]
-kaspa-wallet-core = { path = "vendor/kaspa-wallet-core" }
-workflow-node = { path = "vendor/workflow-node" }
