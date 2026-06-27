@@ -1,14 +1,14 @@
 [package]
-name = "qssm-desktop"
+name = "desktop"
 version = "0.1.0"
-description = "Tauri: Sovereign Command Center + QSSM-LE / .qssm laboratory"
+description = "Tauri: AOL2 command center and identity manager"
 authors = ["QSSM"]
 edition.workspace = true
 license.workspace = true
 publish = false
 
 [lib]
-name = "qssm_desktop_lib"
+name = "desktop_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [build-dependencies]
@@ -31,16 +31,11 @@ zeroize = "1.8"
 aes-gcm = "0.10"
 libp2p = { workspace = true }
 p2p-net = { workspace = true, optional = true }
-qssm-he = { workspace = true, optional = true }
-qssm-gadget = { workspace = true, optional = true }
-template-lib = { workspace = true, optional = true }
-qssm-traits.workspace = true
-qssm-le = { workspace = true, optional = true }
+qssm-entropy = { workspace = true, optional = true }
 qssm-utils.workspace = true
 
 [features]
 default = ["full-stack"]
-zk-only = ["dep:qssm-gadget", "dep:qssm-le", "dep:template-lib"]
-l1-only = ["dep:qssm-he"]
-l2-only = []
-full-stack = ["zk-only", "l1-only", "l2-only", "dep:p2p-net"]
+identity-only = ["dep:qssm-entropy"]
+transport-only = []
+full-stack = ["identity-only", "transport-only", "dep:p2p-net"]

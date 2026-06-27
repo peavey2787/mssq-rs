@@ -2,7 +2,7 @@
 
 Preferred source: **DB-IP City Lite**.
 
-Fetch automatically from `crates/qssm-desktop`:
+Fetch automatically from `desktop/`:
 
 ```powershell
 npm run geo:fetch-dbip

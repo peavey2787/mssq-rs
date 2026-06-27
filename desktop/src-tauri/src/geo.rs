@@ -21,10 +21,12 @@ pub struct GeoFix {
 
 /// Resolve public IPv4/IPv6 (HTTPS). Does not send coordinates to third parties.
 pub fn fetch_public_ip() -> Result<String, String> {
-    let v: serde_json::Value = ureq::get("https://api.ipify.org?format=json")
+    let mut response = ureq::get("https://api.ipify.org?format=json")
         .call()
-        .map_err(|e| format!("ipify: {e}"))?
-        .into_json()
+        .map_err(|e| format!("ipify: {e}"))?;
+    let v: serde_json::Value = response
+        .body_mut()
+        .read_json()
         .map_err(|e| format!("ipify json: {e}"))?;
     v.get("ip")
         .and_then(|x| x.as_str())
@@ -82,9 +84,12 @@ pub fn resolve_geo(bundle_mmdbs: Vec<PathBuf>) -> GeoFix {
             Ok(r) => r,
             Err(_) => continue,
         };
-        if let Ok(city) = reader.lookup::<geoip2::City>(ip_addr) {
-            let lat = city.location.as_ref().and_then(|l| l.latitude);
-            let lon = city.location.as_ref().and_then(|l| l.longitude);
+        if let Ok(result) = reader.lookup(ip_addr) {
+            let Ok(Some(city)) = result.decode::<geoip2::City>() else {
+                continue;
+            };
+            let lat = city.location.latitude;
+            let lon = city.location.longitude;
             if let (Some(lat), Some(lon)) = (lat, lon) {
                 let mut rng = rand::thread_rng();
                 let dlat = rng.gen_range(-FUZZ_DEG..FUZZ_DEG);
